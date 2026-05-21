@@ -53,29 +53,105 @@ function DashboardPage() {
     localStorage.removeItem('wss-auth')
     navigate('/login')
   }
-const triggerSos = () => {
+// const triggerSos = () => {
+
+//   setSosOpen(true)
+//   setSendingSos(true)
+
+//   setTimeout(() => {
+
+//     setSendingSos(false)
+
+//     alertIdRef.current += 1
+
+//     setAlerts((prev) => [
+//       {
+//         id: alertIdRef.current,
+//         text: 'Emergency SOS Activated'
+//       },
+//       ...prev
+//     ].slice(0, 5))
+
+//     window.location.href = "tel:+917979753935"
+
+//   }, 1000)
+// }
+
+
+
+  const triggerSos = async () => {
 
   setSosOpen(true)
   setSendingSos(true)
 
-  setTimeout(() => {
-
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported")
     setSendingSos(false)
+    return
+  }
 
-    alertIdRef.current += 1
+  navigator.geolocation.getCurrentPosition(
 
-    setAlerts((prev) => [
-      {
-        id: alertIdRef.current,
-        text: 'Emergency SOS Activated'
-      },
-      ...prev
-    ].slice(0, 5))
+    async (position) => {
 
-    window.location.href = "tel:+917979753935"
+      const latitude = position.coords.latitude
+      const longitude = position.coords.longitude
 
-  }, 1000)
+      try {
+
+        const response = await fetch("https://women-safety-backend-z8h9.onrender.com/sos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            latitude,
+            longitude,
+          }),
+        })
+
+        const data = await response.json()
+
+        console.log(data)
+
+        // PHONE CALL
+        window.location.href = "tel:+917979753935"
+
+        setSendingSos(false)
+
+        alertIdRef.current += 1
+
+        setAlerts((prev) => [
+          {
+            id: alertIdRef.current,
+            text: "Emergency SOS Activated",
+          },
+          ...prev,
+        ].slice(0, 5))
+
+      } catch (error) {
+
+        console.log(error)
+        setSendingSos(false)
+
+      }
+    },
+
+    (error) => {
+
+      console.log(error)
+      alert("Location permission denied")
+      setSendingSos(false)
+
+    }
+  )
 }
+
+
+
+
+
+
 
   const lightClasses = useMemo(
     () =>
