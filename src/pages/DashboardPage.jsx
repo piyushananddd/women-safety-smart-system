@@ -424,6 +424,37 @@ function DashboardPage() {
                 </motion.div>
               </div>
             </Card>
+
+
+
+
+            <div className="md:col-span-2 xl:col-span-12">
+              <motion.a
+                href="https://www.rapido.bike/"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.01 }}
+                className="mt-6 flex w-full items-center justify-between rounded-[2rem] bg-gradient-to-r from-pink-600 to-pink-500 p-6 text-white shadow-xl"
+              >
+                <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 text-4xl">
+                    🚖
+                  </div>
+
+                  <div>
+                    <h2 className="text-2xl sm:text-4xl font-bold">Book Pink Cab</h2>
+
+                    <p className="mt-2 text-lg text-pink-100">
+                      Verified women drivers for late-night travel via Rapido
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 text-4xl">
+                  →
+                </div>
+              </motion.a>
+            </div>
           </div>
         </section>
         <div className="fixed bottom-4 left-1/2 z-50 flex w-[90%] max-w-sm -translate-x-1/2 items-center justify-around rounded-3xl border border-pale-gray bg-surface p-3 shadow-2xl lg:hidden">

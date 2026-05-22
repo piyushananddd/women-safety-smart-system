@@ -15,6 +15,25 @@ function PathfinderPage() {
   const [showResult, setShowResult] = useState(false);
   const [routeData, setRouteData] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
+  const hour = new Date().getHours()
+
+const isNight = hour >= 19 || hour <= 5
+
+const humanCount = Math.floor(Math.random() * 120)
+
+const vehicles = Math.floor(Math.random() * 40)
+
+const lightLevel = isNight ? "LOW" : "GOOD"
+
+let threatLevel = "LOW"
+
+if (isNight && humanCount < 20) {
+  threatLevel = "HIGH"
+} else if (humanCount < 40) {
+  threatLevel = "MEDIUM"
+} else {
+  threatLevel = "LOW"
+}
 
   const handleSearch = async () => {
     if (!startPoint || !destination) {
@@ -172,21 +191,21 @@ function PathfinderPage() {
                 <p className="text-gray-400 text-sm">HUMAN COUNT</p>
 
                 <h2 className="text-4xl font-bold text-purple-400 mt-2">
-                  {routeData?.dangerScore}
+                 {humanCount}
                 </h2>
               </div>
 
               <div className="bg-cyan-500/20 rounded-2xl p-4">
                 <p className="text-gray-400 text-sm">VEHICLES</p>
 
-                <h2 className="text-4xl font-bold text-cyan-400 mt-2">18</h2>
+                <h2 className="text-4xl font-bold text-cyan-400 mt-2">{vehicles}</h2>
               </div>
 
               <div className="bg-yellow-500/20 rounded-2xl p-4">
                 <p className="text-gray-400 text-sm">LIGHT LEVEL</p>
 
                 <h2 className="text-4xl font-bold text-yellow-400 mt-2">
-                  GOOD
+                  {lightLevel}
                 </h2>
               </div>
 
@@ -194,15 +213,17 @@ function PathfinderPage() {
                 <p className="text-gray-400 text-sm">THREAT LEVEL</p>
 
                 <h2 className="text-3xl font-bold text-green-400 mt-2">
-                  {routeData?.threatLevel}
+                 {threatLevel}
                 </h2>
               </div>
             </div>
 
             <div className="mt-6 bg-green-500/10 border border-green-500 rounded-xl p-4 text-green-400 font-semibold text-center">
-              {routeData?.safeRoute
-                ? "✅ Safe Path Suggested"
-                : "⚠️ Unsafe Route Detected"}
+              {threatLevel === "HIGH"
+  ? "⚠️ Unsafe Route Detected"
+  : threatLevel === "MEDIUM"
+  ? "🟡 Moderately Safe Route"
+  : "✅ Safe Route Suggested"}
             </div>
           </div>
         )}
