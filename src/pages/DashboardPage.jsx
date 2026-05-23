@@ -514,7 +514,7 @@ function DashboardPage() {
 
 
                   {/* WOMEN EMPOWERMENT SLIDER */}
-<div className="mt-10 rounded-[2rem] bg-[#050816] p-6 shadow-2xl">
+<div className="mt-10 rounded-[2rem] bg-[#050816] p-6 pb-22 shadow-2xl">
   <div className="mb-6 text-center">
     <h2 className="text-4xl font-bold tracking-wide text-white">
       NARI SHAKTI
