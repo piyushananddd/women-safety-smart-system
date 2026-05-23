@@ -480,7 +480,7 @@ function DashboardPage() {
 
 
 
-        <div className="fixed bottom-4 left-1/2 z-50 flex w-[90%] max-w-sm -translate-x-1/2 items-center justify-around rounded-3xl border border-pale-gray bg-surface p-3 shadow-2xl lg:hidden">
+       <div className="fixed bottom-4 left-1/2 z-50 flex w-[90%] max-w-sm -translate-x-1/2 items-center justify-around rounded-3xl border border-pale-gray bg-white/70 backdrop-blur-md p-3 shadow-2xl lg:hidden">
           <button className="flex flex-col items-center text-primary">
             <LayoutDashboard size={22} />
             <span className="text-[10px]">Home</span>
