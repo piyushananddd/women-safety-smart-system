@@ -263,7 +263,7 @@ function DashboardPage() {
             </motion.div>
           </div>
 
-          <div className="grid auto-rows-[minmax(0,1fr)] gap-5 md:grid-cols-2 xl:grid-cols-12 xl:items-stretch">
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-12">
             <Card
               accent="emerald"
               title="Street Light Status"
