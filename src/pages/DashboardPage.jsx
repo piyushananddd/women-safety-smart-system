@@ -189,13 +189,14 @@ function DashboardPage() {
               <LayoutDashboard size={16} className="text-primary" />
               Dashboard
             </button>
-            <button
-              type="button"
-              className="flex w-full items-center gap-2 rounded-2xl px-3 py-2.5 text-sm text-mid-gray transition hover:bg-off-white"
-            >
-              <ShieldAlert size={16} />
-              Alerts
-            </button>
+           <button
+  type="button"
+  onClick={() => navigate("/alerts")}
+  className="flex w-full items-center gap-2 rounded-2xl px-3 py-2.5 text-sm text-mid-gray transition hover:bg-off-white"
+>
+  <ShieldAlert size={16} />
+  Alerts
+</button>
             <button
               type="button"
               className="flex w-full items-center gap-2 rounded-2xl px-3 py-2.5 text-sm text-mid-gray transition hover:bg-off-white"
@@ -263,7 +264,7 @@ function DashboardPage() {
             </motion.div>
           </div>
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-12">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-12">
             <Card
               accent="emerald"
               title="Street Light Status"
@@ -377,8 +378,7 @@ function DashboardPage() {
               subtitle="Latest emergency communications"
               className="xl:col-span-4"
             >
-              <AnimatePresence mode="popLayout">
-                <div className="flex max-h-[min(22rem,55vh)] flex-col gap-2 overflow-y-auto pr-1">
+              <AnimatePresence mode="popLayout">                <div className="flex max-h-[min(22rem,55vh)] flex-col gap-2 overflow-y-auto pr-1">
                   {alerts.map((alert, i) => {
                     const palettes = [
                       "border-pale-gray bg-off-white text-primary",
@@ -430,9 +430,6 @@ function DashboardPage() {
               </div>
             </Card>
 
-
-            
-
             <div className="md:col-span-2 xl:col-span-12 self-start">
               <motion.a
                 href="https://www.rapido.bike/"
@@ -461,36 +458,22 @@ function DashboardPage() {
                   →
                 </div>
               </motion.a>
-              
             </div>
-
-            
           </div>
-
-                  
-
         </section>
 
-
-
-                  
-                  
-
-
-
-
-
-       <div className="fixed bottom-4 left-1/2 z-50 flex w-[90%] max-w-sm -translate-x-1/2 items-center justify-around rounded-3xl border border-pale-gray bg-white/70 backdrop-blur-md p-3 shadow-2xl lg:hidden">
+        <div className="fixed bottom-4 left-1/2 z-50 flex w-[90%] max-w-sm -translate-x-1/2 items-center justify-around rounded-3xl border border-pale-gray bg-white/70 backdrop-blur-md p-3 shadow-2xl lg:hidden">
           <button className="flex flex-col items-center text-primary">
             <LayoutDashboard size={22} />
             <span className="text-[10px]">Home</span>
           </button>
-
-          <button className="flex flex-col items-center text-mid-gray">
+          <button
+            onClick={() => navigate("/alerts")}
+            className="flex flex-col items-center text-mid-gray"
+          >
             <ShieldAlert size={22} />
             <span className="text-[10px]">Alerts</span>
           </button>
-
           <button
             onClick={() => navigate("/pathfinder")}
             className="flex flex-col items-center text-mid-gray"
@@ -506,209 +489,188 @@ function DashboardPage() {
         </div>
       </div>
 
-
-
-
-
-
-
-
-                  {/* WOMEN EMPOWERMENT SLIDER */}
-<div className="mt-10 rounded-[2rem] bg-[#050816] p-6 pb-52 shadow-2xl">
-  <div className="mb-6 text-center">
-    <h2 className="text-4xl font-bold tracking-wide text-white">
-      NARI SHAKTI
-    </h2>
-
-    <p className="mt-2 text-sm uppercase tracking-[0.35em] text-violet-300">
-      Empowering The Future
-    </p>
-  </div>
-
-  <Swiper
-    modules={[Autoplay, Pagination]}
-    autoplay={{
-      delay: 3500,
-      disableOnInteraction: false,
-    }}
-    pagination={{ clickable: true }}
-    spaceBetween={30}
-    slidesPerView={1}
-    loop={true}
-    className="rounded-[2rem]"
-  >
-    {/* SLIDE 1 */}
-    <SwiperSlide>
-      <div className="relative overflow-hidden rounded-[2rem]">
-        <img
-          src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1400&auto=format&fit=crop"
-          alt="Women Empowerment"
-          className="h-[650px] w-full object-cover"
-        />
-
-        <div className="absolute inset-0 bg-black/50" />
-
-        <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
-          <span className="mb-4 text-6xl text-violet-400">❝</span>
-
-          <h2 className="max-w-3xl text-5xl font-bold leading-tight">
-            Isolated we are strong, but together we are invincible.
+      {/* WOMEN EMPOWERMENT SLIDER */}
+      <div className="mt-10 rounded-[2rem] bg-[#050816] p-6 pb-52 shadow-2xl">
+        <div className="mb-6 text-center">
+          <h2 className="text-4xl font-bold tracking-wide text-white">
+            NARI SHAKTI
           </h2>
 
-          <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
-            — TEAM NEXURA
+          <p className="mt-2 text-sm uppercase tracking-[0.35em] text-violet-300">
+            Empowering The Future
+          </p>
+        </div>
+
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          autoplay={{
+            delay: 3500,
+            disableOnInteraction: false,
+          }}
+          pagination={{ clickable: true }}
+          spaceBetween={30}
+          slidesPerView={1}
+          loop={true}
+          className="rounded-[2rem]"
+        >
+          {/* SLIDE 1 */}
+          <SwiperSlide>
+            <div className="relative overflow-hidden rounded-[2rem]">
+              <img
+                src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1400&auto=format&fit=crop"
+                alt="Women Empowerment"
+                className="h-[650px] w-full object-cover"
+              />
+
+              <div className="absolute inset-0 bg-black/50" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
+                <span className="mb-4 text-6xl text-violet-400">❝</span>
+
+                <h2 className="max-w-3xl text-5xl font-bold leading-tight">
+                  Isolated we are strong, but together we are invincible.
+                </h2>
+
+                <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
+                  — TEAM NEXURA
+                </p>
+              </div>
+            </div>
+          </SwiperSlide>
+
+          {/* SLIDE 2 */}
+          <SwiperSlide>
+            <div className="relative overflow-hidden rounded-[2rem]">
+              <img
+                src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=1400&auto=format&fit=crop"
+                alt="Women Motivation"
+                className="h-[650px] w-full object-cover"
+              />
+
+              <div className="absolute inset-0 bg-black/50" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
+                <span className="mb-4 text-6xl text-violet-400">❝</span>
+
+                <h2 className="max-w-3xl text-5xl font-bold leading-tight">
+                  A strong woman stands up for herself. A stronger woman stands
+                  up for everyone.
+                </h2>
+
+                <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
+                  — TEAM NEXURA
+                </p>
+              </div>
+            </div>
+          </SwiperSlide>
+
+          {/* SLIDE 3 */}
+          <SwiperSlide>
+            <div className="relative overflow-hidden rounded-[2rem]">
+              <img
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1400&auto=format&fit=crop"
+                alt="Women Leadership"
+                className="h-[650px] w-full object-cover"
+              />
+
+              <div className="absolute inset-0 bg-black/50" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
+                <span className="mb-4 text-6xl text-violet-400">❝</span>
+
+                <h2 className="max-w-3xl text-5xl font-bold leading-tight">
+                  Empowered women empower generations.
+                </h2>
+
+                <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
+                  — TEAM NEXURA
+                </p>
+              </div>
+            </div>
+          </SwiperSlide>
+
+          {/* SLIDE 4 */}
+          <SwiperSlide>
+            <div className="relative overflow-hidden rounded-[2rem]">
+              <img
+                src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1400&auto=format&fit=crop"
+                alt="Women Inspiration"
+                className="h-[650px] w-full object-cover"
+              />
+
+              <div className="absolute inset-0 bg-black/50" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
+                <span className="mb-4 text-6xl text-violet-400">❝</span>
+
+                <h2 className="max-w-3xl text-5xl font-bold leading-tight">
+                  There is no limit to what women can accomplish.
+                </h2>
+
+                <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
+                  — TEAM NEXURA
+                </p>
+              </div>
+            </div>
+          </SwiperSlide>
+
+          {/* SLIDE 5 */}
+          <SwiperSlide>
+            <div className="relative overflow-hidden rounded-[2rem]">
+              <img
+                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1400&auto=format&fit=crop"
+                alt="Women Success"
+                className="h-[650px] w-full object-cover"
+              />
+
+              <div className="absolute inset-0 bg-black/50" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
+                <span className="mb-4 text-6xl text-violet-400">❝</span>
+
+                <h2 className="max-w-3xl text-5xl font-bold leading-tight">
+                  She rises. She leads. She inspires the world.
+                </h2>
+
+                <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
+                  — TEAM NEXURA
+                </p>
+              </div>
+            </div>
+          </SwiperSlide>
+
+          {/* SLIDE 6 */}
+          <SwiperSlide>
+            <div className="relative overflow-hidden rounded-[2rem]">
+              <img
+                src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1400&auto=format&fit=crop"
+                alt="Women Future"
+                className="h-[650px] w-full object-cover"
+              />
+
+              <div className="absolute inset-0 bg-black/50" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
+                <span className="mb-4 text-6xl text-violet-400">❝</span>
+
+                <h2 className="max-w-3xl text-5xl font-bold leading-tight">
+                  Fearless minds create fearless futures.
+                </h2>
+
+                <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
+                  — TEAM NEXURA
+                </p>
+              </div>
+            </div>
+          </SwiperSlide>
+        </Swiper>
+
+        <div className="mt-10 text-center">
+          <p className="text-3xl italic text-gray-300">
+            “Ab Andhera nahi, Sirf hifajat rahegi... TEAM NEXURA”
           </p>
         </div>
       </div>
-    </SwiperSlide>
-
-    {/* SLIDE 2 */}
-    <SwiperSlide>
-      <div className="relative overflow-hidden rounded-[2rem]">
-        <img
-          src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=1400&auto=format&fit=crop"
-          alt="Women Motivation"
-          className="h-[650px] w-full object-cover"
-        />
-
-        <div className="absolute inset-0 bg-black/50" />
-
-        <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
-          <span className="mb-4 text-6xl text-violet-400">❝</span>
-
-          <h2 className="max-w-3xl text-5xl font-bold leading-tight">
-            A strong woman stands up for herself. A stronger woman stands up
-            for everyone.
-          </h2>
-
-          <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
-            — TEAM NEXURA
-          </p>
-        </div>
-      </div>
-    </SwiperSlide>
-
-    {/* SLIDE 3 */}
-    <SwiperSlide>
-      <div className="relative overflow-hidden rounded-[2rem]">
-        <img
-          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1400&auto=format&fit=crop"
-          alt="Women Leadership"
-          className="h-[650px] w-full object-cover"
-        />
-
-        <div className="absolute inset-0 bg-black/50" />
-
-        <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
-          <span className="mb-4 text-6xl text-violet-400">❝</span>
-
-          <h2 className="max-w-3xl text-5xl font-bold leading-tight">
-            Empowered women empower generations.
-          </h2>
-
-          <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
-            — TEAM NEXURA
-          </p>
-        </div>
-      </div>
-    </SwiperSlide>
-
-    {/* SLIDE 4 */}
-    <SwiperSlide>
-      <div className="relative overflow-hidden rounded-[2rem]">
-        <img
-          src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1400&auto=format&fit=crop"
-          alt="Women Inspiration"
-          className="h-[650px] w-full object-cover"
-        />
-
-        <div className="absolute inset-0 bg-black/50" />
-
-        <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
-          <span className="mb-4 text-6xl text-violet-400">❝</span>
-
-          <h2 className="max-w-3xl text-5xl font-bold leading-tight">
-            There is no limit to what women can accomplish.
-          </h2>
-
-          <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
-            — TEAM NEXURA
-          </p>
-        </div>
-      </div>
-    </SwiperSlide>
-
-    {/* SLIDE 5 */}
-    <SwiperSlide>
-      <div className="relative overflow-hidden rounded-[2rem]">
-        <img
-          src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1400&auto=format&fit=crop"
-          alt="Women Success"
-          className="h-[650px] w-full object-cover"
-        />
-
-        <div className="absolute inset-0 bg-black/50" />
-
-        <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
-          <span className="mb-4 text-6xl text-violet-400">❝</span>
-
-          <h2 className="max-w-3xl text-5xl font-bold leading-tight">
-            She rises. She leads. She inspires the world.
-          </h2>
-
-          <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
-            — TEAM NEXURA
-          </p>
-        </div>
-      </div>
-    </SwiperSlide>
-
-    {/* SLIDE 6 */}
-    <SwiperSlide>
-      <div className="relative overflow-hidden rounded-[2rem]">
-        <img
-          src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1400&auto=format&fit=crop"
-          alt="Women Future"
-          className="h-[650px] w-full object-cover"
-        />
-
-        <div className="absolute inset-0 bg-black/50" />
-
-        <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
-          <span className="mb-4 text-6xl text-violet-400">❝</span>
-
-          <h2 className="max-w-3xl text-5xl font-bold leading-tight">
-            Fearless minds create fearless futures.
-          </h2>
-
-          <p className="mt-6 text-lg uppercase tracking-[0.4em] text-cyan-300">
-            — TEAM NEXURA
-          </p>
-        </div>
-      </div>
-    </SwiperSlide>
-  </Swiper>
-
-  <div className="mt-10 text-center">
-    <p className="text-3xl italic text-gray-300">
-      “Ab Andhera nahi, Sirf hifajat rahegi... TEAM NEXURA”
-    </p>
-  </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       <AlertModal
         open={sosOpen}

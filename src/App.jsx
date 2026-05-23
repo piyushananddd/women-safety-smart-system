@@ -4,6 +4,7 @@ import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PathfinderPage from "./pages/PathfinderPage";
+import AlertsPage from "./pages/AlertsPage";
 
 function App() {
   const location = useLocation();
@@ -34,6 +35,7 @@ function App() {
         />
         <Route path="/pathfinder" element={<PathfinderPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/alerts" element={<AlertsPage />} />
       </Routes>
     </AnimatePresence>
   );
