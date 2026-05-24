@@ -10,7 +10,7 @@ function AlertsPage() {
       >
         <div className="text-6xl">🔔</div>
 
-        <h1 className="mt-6 text-3xl font-bold text-primary">
+       <h1 className="mt-6 text-2xl font-bold text-primary sm:text-3xl">
           No Alerts Available
         </h1>
 

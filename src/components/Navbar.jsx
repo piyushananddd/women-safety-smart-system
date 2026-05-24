@@ -11,7 +11,7 @@ function Navbar({ onLogout, variant = 'light' }) {
       animate={{ opacity: 1, y: 0 }}
       className={
         isBrand
-          ? 'mb-5 flex items-center justify-between rounded-[2rem] border border-pale-gray bg-surface px-4 py-3 shadow-md shadow-primary/5 md:px-6'
+          ? 'mb-5 flex items-center justify-between rounded-[2rem] border border-pink-300 bg-[linear-gradient(120deg,#ff5fa2,#ffd6e7,#ff8dc7,#fff0f7,#ff5fa2)] bg-[length:300%_300%] animate-[gradientMove_6s_ease_infinite] px-4 py-3 shadow-[0_0_35px_rgba(255,105,180,0.45)] md:px-6'
           : 'mb-5 flex items-center justify-between rounded-2xl border border-pale-gray bg-surface px-4 py-3 shadow-sm md:px-6'
       }
     >
@@ -47,25 +47,46 @@ function Navbar({ onLogout, variant = 'light' }) {
             className="w-36 bg-transparent text-sm text-primary outline-none md:w-40 placeholder:text-light-gray"
           />
         </label>
-        <button
-          type="button"
-          className={
-            isBrand
-              ? 'rounded-xl border border-pale-gray bg-off-white p-2 text-mid-gray hover:bg-pale-gray/40'
-              : 'rounded-lg border border-pale-gray p-2 text-mid-gray'
-          }
-        >
-          <Bell size={16} />
-        </button>
-        <img
-          src="https://i.pravatar.cc/80?img=32"
-          alt="Profile"
-          className={
-            isBrand
-              ? 'h-10 w-10 rounded-full border-2 border-pale-gray shadow-sm ring-2 ring-pale-gray/80'
-              : 'h-10 w-10 rounded-full border border-pale-gray'
-          }
-        />
+       <button
+  type="button"
+  onClick={() =>
+    alert(
+      "🔔 Safety Status\n\nNo emergency alerts detected.\nAll monitored zones are currently safe."
+    )
+  }
+  className={
+    isBrand
+      ? 'rounded-xl border border-pale-gray bg-off-white p-2 text-mid-gray hover:bg-pale-gray/40'
+      : 'rounded-lg border border-pale-gray p-2 text-mid-gray'
+  }
+>
+  <Bell size={16} />
+</button>
+       <div className="relative group">
+  <button className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500 text-sm font-bold text-white shadow-md">
+    PA
+  </button>
+
+  <div className="absolute right-0 top-12 hidden w-52 rounded-2xl border border-pale-gray bg-white p-2 shadow-2xl group-hover:block z-50">
+
+    <button className="w-full rounded-xl px-4 py-3 text-left text-sm hover:bg-off-white">
+      👤 Profile
+    </button>
+
+    <button className="w-full rounded-xl px-4 py-3 text-left text-sm hover:bg-off-white">
+      ⚙️ Safety Settings
+    </button>
+
+    <button className="w-full rounded-xl px-4 py-3 text-left text-sm hover:bg-off-white">
+      📞 Emergency Contacts
+    </button>
+
+    <button className="w-full rounded-xl px-4 py-3 text-left text-sm text-red-500 hover:bg-red-50">
+      🚪 Logout
+    </button>
+
+  </div>
+</div>
         <NeonButton
           onClick={onLogout}
           className={

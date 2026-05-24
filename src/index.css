@@ -43,3 +43,20 @@ body {
     0 0 0 1px var(--color-pale-gray),
     0 0 0 3px color-mix(in srgb, var(--color-accent) 35%, transparent);
 }
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+    filter: brightness(1);
+  }
+
+  50% {
+    background-position: 100% 50%;
+    filter: brightness(1.08);
+  }
+
+  100% {
+    background-position: 0% 50%;
+    filter: brightness(1);
+  }
+}

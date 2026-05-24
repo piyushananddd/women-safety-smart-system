@@ -189,14 +189,14 @@ function DashboardPage() {
               <LayoutDashboard size={16} className="text-primary" />
               Dashboard
             </button>
-           <button
-  type="button"
-  onClick={() => navigate("/alerts")}
-  className="flex w-full items-center gap-2 rounded-2xl px-3 py-2.5 text-sm text-mid-gray transition hover:bg-off-white"
->
-  <ShieldAlert size={16} />
-  Alerts
-</button>
+            <button
+              type="button"
+              onClick={() => navigate("/alerts")}
+              className="flex w-full items-center gap-2 rounded-2xl px-3 py-2.5 text-sm text-mid-gray transition hover:bg-off-white"
+            >
+              <ShieldAlert size={16} />
+              Alerts
+            </button>
             <button
               type="button"
               className="flex w-full items-center gap-2 rounded-2xl px-3 py-2.5 text-sm text-mid-gray transition hover:bg-off-white"
@@ -212,7 +212,10 @@ function DashboardPage() {
               🛡️ Pathfinder.AI
             </button>
           </nav>
-          <div className="mt-6 rounded-2xl border border-pale-gray bg-primary p-4 text-center text-white shadow-sm">
+          <div
+            onClick={() => navigate("/support")}
+            className="mt-6 cursor-pointer rounded-2xl bg-primary p-4 text-center text-white shadow-sm transition hover:scale-[1.02]"
+          >
             <p className="text-sm font-semibold">Need help?</p>
             <p className="mt-1 text-xs text-light-gray">
               24/7 safety line active
@@ -224,43 +227,77 @@ function DashboardPage() {
           <Navbar onLogout={handleLogout} variant="safeguard" />
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 xl:gap-6">
+
             <motion.div
-              whileHover={{ y: -2 }}
-              className="flex h-36 flex-col justify-between rounded-[2rem] border border-pale-gray bg-surface p-5 shadow-sm"
+              whileHover={{
+                y: -4,
+              }}
+              transition={{ duration: 0.2 }}
+              className="group relative flex h-36 flex-col justify-between overflow-hidden rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-2xl"
             >
-              <p className="text-xs font-semibold uppercase tracking-wide text-mid-gray">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                 Monitored streets
               </p>
-              <p className="text-3xl font-bold tabular-nums text-primary">53</p>
-            </motion.div>
-            <motion.div
-              whileHover={{ y: -2 }}
-              className="flex h-36 flex-col justify-between rounded-[2rem] border border-pale-gray bg-surface p-5 shadow-sm"
-            >
-              <p className="text-xs font-semibold uppercase tracking-wide text-mid-gray">
-                Active cameras
+
+              <p className="text-3xl font-bold tabular-nums text-gray-900">
+                53
               </p>
-              <p className="text-3xl font-bold tabular-nums text-primary">24</p>
+
+             <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
             </motion.div>
-            <motion.div
-              whileHover={{ y: -2 }}
-              className="flex h-36 flex-col justify-between rounded-[2rem] border border-pale-gray bg-surface p-5 shadow-sm"
+
+           <motion.div
+              whileHover={{
+                y: -4,
+              }}
+              transition={{ duration: 0.2 }}
+              className="group relative flex h-36 flex-col justify-between overflow-hidden rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-2xl"
             >
-              <p className="text-xs font-semibold uppercase tracking-wide text-mid-gray">
-                Resolved alerts
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              Active Camera
               </p>
-              <p className="text-3xl font-bold tabular-nums text-emerald-700">
+
+              <p className="text-3xl font-bold tabular-nums text-gray-900">
+               24
+              </p>
+
+             <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
+            </motion.div>
+
+           <motion.div
+              whileHover={{
+                y: -4,
+              }}
+              transition={{ duration: 0.2 }}
+              className="group relative flex h-36 flex-col justify-between overflow-hidden rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-2xl"
+            >
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+               Resolved Alerts
+              </p>
+
+              <p className="text-3xl font-bold tabular-nums text-gray-900">
                 +46
               </p>
+
+             <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
             </motion.div>
+
             <motion.div
-              whileHover={{ y: -2 }}
-              className="flex h-36 flex-col justify-between rounded-[2rem] border border-pale-gray bg-surface p-5 shadow-sm"
+              whileHover={{
+                y: -4,
+              }}
+              transition={{ duration: 0.2 }}
+              className="group relative flex h-36 flex-col justify-between overflow-hidden rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-2xl"
             >
-              <p className="text-xs font-semibold uppercase tracking-wide text-mid-gray">
-                SOS this week
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                SOS This Week
               </p>
-              <p className="text-3xl font-bold tabular-nums text-primary">12</p>
+
+              <p className="text-3xl font-bold tabular-nums text-gray-900">
+                13
+              </p>
+
+             <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
             </motion.div>
           </div>
 
@@ -378,7 +415,9 @@ function DashboardPage() {
               subtitle="Latest emergency communications"
               className="xl:col-span-4"
             >
-              <AnimatePresence mode="popLayout">                <div className="flex max-h-[min(22rem,55vh)] flex-col gap-2 overflow-y-auto pr-1">
+              <AnimatePresence mode="popLayout">
+                {" "}
+                <div className="flex max-h-[min(22rem,55vh)] flex-col gap-2 overflow-y-auto pr-1">
                   {alerts.map((alert, i) => {
                     const palettes = [
                       "border-pale-gray bg-off-white text-primary",
