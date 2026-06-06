@@ -34,6 +34,54 @@ function DashboardPage() {
   const [sendingSos, setSendingSos] = useState(false);
   const [alerts, setAlerts] = useState(alertsSeed);
   const alertIdRef = useRef(10);
+  const [humanCount, setHumanCount] = useState(0);
+  const [vehicleCount, setVehicleCount] = useState(0);
+  const [resolvedAlerts, setResolvedAlerts] = useState(0);
+  const [sosCount, setSosCount] = useState(0);
+  const [startPoint, setStartPoint] = useState("");
+const [destination, setDestination] = useState("");
+const [routeGenerated, setRouteGenerated] = useState(false);
+const [sensorData, setSensorData] = useState({
+  status: "Waiting for ESP32...",
+  distanceValue: 0,
+  threatLevel: "None",
+});
+useEffect(() => {
+  const fetchData = () => {
+    fetch("http://localhost:3000/api/dashboard")
+      .then((res) => res.json())
+      .then((data) => {
+        setSensorData({
+          status: data.status,
+          distanceValue: data.distanceValue,
+          threatLevel:
+            data.status === "Waiting for ESP32..."
+              ? "None"
+              : data.status.includes("Unsafe")
+              ? "High"
+              : "Low",
+        });
+      });
+  };
+
+  fetchData(); // Run immediately
+
+  const interval = setInterval(fetchData, 3000);
+
+  return () => clearInterval(interval);
+}, []);
+  // useEffect(() => {
+  //   const saved = localStorage.getItem("dashboardData");
+
+  //   if (saved) {
+  //     const data = JSON.parse(saved);
+
+  //     setHumanCount(() => data.humanCount || 0);
+  //     setVehicleCount(() => data.vehicleCount || 0);
+  //     setResolvedAlerts(() => data.resolvedAlerts || 0);
+  //     setSosCount(() => data.sosCount || 0);
+  //   }
+  // }, []);
 
   useEffect(() => {
     const statusTimer = setInterval(() => {
@@ -65,10 +113,31 @@ function DashboardPage() {
     return () => clearInterval(alertTimer);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("wss-auth");
-    navigate("/login");
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem("wss-auth");
+  //   navigate("/login");
+  // };
+const handleSearch = () => {
+  if (!startPoint || !destination) {
+    alert("Please select both locations");
+    return;
+  }
+
+  if (routeGenerated) return;
+
+  setHumanCount(43);
+  setVehicleCount(8);
+  setResolvedAlerts(13);
+  setSosCount(4);
+
+  setRouteGenerated(true);
+};
+
+const handleLogout = () => {
+  localStorage.removeItem("wss-auth");
+  localStorage.removeItem("dashboardData");
+  navigate("/login");
+};
   // const triggerSos = () => {
 
   //   setSosOpen(true)
@@ -225,9 +294,56 @@ function DashboardPage() {
 
         <section className="space-y-6">
           <Navbar onLogout={handleLogout} variant="safeguard" />
+    <div className="rounded-[2rem] border border-pale-gray bg-surface p-6 shadow-md">
+  <h2 className="text-2xl font-bold text-primary">
+    Pathfinder AI
+  </h2>
 
+  <p className="mt-1 text-sm text-mid-gray">
+    Find the safest route before travelling
+  </p>
+
+  <div className="mt-5 grid gap-4 md:grid-cols-2">
+    <input
+      type="text"
+      placeholder="Current Location"
+      value={startPoint}
+      onChange={(e) => setStartPoint(e.target.value)}
+      className="rounded-xl border border-pale-gray px-4 py-3 outline-none"
+    />
+
+    <input
+      type="text"
+      placeholder="Destination"
+      value={destination}
+      onChange={(e) => setDestination(e.target.value)}
+      className="rounded-xl border border-pale-gray px-4 py-3 outline-none"
+    />
+  </div>
+
+ <button
+  onClick={handleSearch}
+  className="mt-4 w-full rounded-xl bg-primary py-3 font-semibold text-white"
+>
+  GET SAFEST ROUTE
+</button> 
+</div>
+<div className="bg-white rounded-3xl p-6 shadow">
+  <h3 className="text-xl font-bold mb-4">Live Sensor Data</h3>
+
+  <p>
+    <strong>Street Light Status:</strong> {sensorData.status}
+  </p>
+
+  <p>
+    <strong>Vehicle Distance:</strong> {sensorData.distanceValue} cm
+  </p>
+
+  <p>
+    <strong>Threat Level:</strong> {sensorData.threatLevel}
+  </p>
+</div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 xl:gap-6">
-
             <motion.div
               whileHover={{
                 y: -4,
@@ -240,13 +356,13 @@ function DashboardPage() {
               </p>
 
               <p className="text-3xl font-bold tabular-nums text-gray-900">
-                53
+                {humanCount}
               </p>
 
-             <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
+              <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
             </motion.div>
 
-           <motion.div
+            <motion.div
               whileHover={{
                 y: -4,
               }}
@@ -254,17 +370,17 @@ function DashboardPage() {
               className="group relative flex h-36 flex-col justify-between overflow-hidden rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-2xl"
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-              Active Camera
+                Active Camera
               </p>
 
               <p className="text-3xl font-bold tabular-nums text-gray-900">
-               24
+                {vehicleCount}
               </p>
 
-             <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
+              <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
             </motion.div>
 
-           <motion.div
+            <motion.div
               whileHover={{
                 y: -4,
               }}
@@ -272,14 +388,14 @@ function DashboardPage() {
               className="group relative flex h-36 flex-col justify-between overflow-hidden rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-2xl"
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-               Resolved Alerts
+                Resolved Alerts
               </p>
 
               <p className="text-3xl font-bold tabular-nums text-gray-900">
-                +46
+                {resolvedAlerts}
               </p>
 
-             <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
+              <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
             </motion.div>
 
             <motion.div
@@ -294,10 +410,10 @@ function DashboardPage() {
               </p>
 
               <p className="text-3xl font-bold tabular-nums text-gray-900">
-                13
+                {sosCount}
               </p>
 
-             <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
+              <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
             </motion.div>
           </div>
 

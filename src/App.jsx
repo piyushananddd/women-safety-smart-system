@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PathfinderPage from "./pages/PathfinderPage";
 import AlertsPage from "./pages/AlertsPage";
 import SupportPage from "./pages/SupportPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const location = useLocation();
@@ -38,6 +39,14 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/alerts" element={<AlertsPage />} />
         <Route path="/support" element={<SupportPage />} />
+        <Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <ProfilePage />
+    </ProtectedRoute>
+  }
+/>
       </Routes>
     </AnimatePresence>
   );

@@ -37,7 +37,7 @@ function LoginPage() {
     setTimeout(() => {
       localStorage.setItem('wss-auth', 'true')
       setLoading(false)
-      navigate('/dashboard')
+     navigate("/dashboard")
     }, 1200)
   }
 
@@ -59,7 +59,7 @@ function LoginPage() {
         className="relative z-10 w-full max-w-md rounded-3xl border border-pale-gray bg-surface p-7 shadow-lg shadow-primary/5 md:p-8"
       >
         <p className="text-sm font-medium text-mid-gray">Welcome back</p>
-        <h1 className="mt-1 text-2xl font-bold text-primary">Women Safety Smart System</h1>
+        <h1 className="mt-1 text-2xl font-bold text-primary font-serif">Raksha-Kavach</h1>
         <p className="mt-1 text-sm text-light-gray">Sign in to monitor alerts, cameras, and SOS.</p>
 
         <div className="mt-6 space-y-4">

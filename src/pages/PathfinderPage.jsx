@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./pathfinder.css";
 import axios from "axios";
 import {
@@ -10,30 +11,55 @@ import {
 } from "react-leaflet";
 
 function PathfinderPage() {
+  const navigate = useNavigate();
   const [startPoint, setStartPoint] = useState("");
+  // const locations = [
+  //   {
+  //     name: "RIT Roorkee Main Gate",
+  //     lat: 29.8547,
+  //     lng: 77.8888,
+  //   },
+  //   {
+  //     name: "Railway Station Road",
+  //     lat: 29.867,
+  //     lng: 77.8951,
+  //   },
+  //   {
+  //     name: "Civil Lines Market",
+  //     lat: 29.854,
+  //     lng: 77.8895,
+  //   },
+  //   {
+  //     name: "IIT Roorkee Side Gate",
+  //     lat: 29.8668,
+  //     lng: 77.8964,
+  //   },
+  // ];
   const [destination, setDestination] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [routeData, setRouteData] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
-  const hour = new Date().getHours()
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  // const [startCoords, setStartCoords] = useState([29.8547, 77.8888])
+  const hour = new Date().getHours();
 
-const isNight = hour >= 19 || hour <= 5
+  const isNight = hour >= 19 || hour <= 5;
 
-const humanCount = Math.floor(Math.random() * 120)
+  const humanCount = Math.floor(Math.random() * 120);
 
-const vehicles = Math.floor(Math.random() * 40)
+  const vehicles = Math.floor(Math.random() * 40);
 
-const lightLevel = isNight ? "LOW" : "GOOD"
+  const lightLevel = isNight ? "LOW" : "GOOD";
 
-let threatLevel = "LOW"
+  let threatLevel = "LOW";
 
-if (isNight && humanCount < 20) {
-  threatLevel = "HIGH"
-} else if (humanCount < 40) {
-  threatLevel = "MEDIUM"
-} else {
-  threatLevel = "LOW"
-}
+  if (isNight && humanCount < 20) {
+    threatLevel = "HIGH";
+  } else if (humanCount < 40) {
+    threatLevel = "MEDIUM";
+  } else {
+    threatLevel = "LOW";
+  }
 
   const handleSearch = async () => {
     if (!startPoint || !destination) {
@@ -62,8 +88,8 @@ if (isNight && humanCount < 20) {
 
       setRouteData(data);
 
-      console.log(import.meta.env.VITE_ORS_API_KEY)
-     
+      console.log(import.meta.env.VITE_ORS_API_KEY);
+
       const geoStart = await axios.get(
         `https://api.openrouteservice.org/geocode/search?api_key=${import.meta.env.VITE_ORS_API_KEY}&text=${startPoint}`,
       );
@@ -89,34 +115,34 @@ if (isNight && humanCount < 20) {
         },
       );
 
+      console.log(routeResponse.data);
 
-      console.log(routeResponse.data)
+      if (
+        routeResponse.data.features &&
+        routeResponse.data.features.length > 0
+      ) {
+        const coords = routeResponse.data.features[0].geometry.coordinates.map(
+          (coord) => [coord[1], coord[0]],
+        );
 
-
-
-     if (
-  routeResponse.data.features &&
-  routeResponse.data.features.length > 0
-) {
-
-  const coords =
-    routeResponse.data.features[0].geometry.coordinates.map(
-      (coord) => [coord[1], coord[0]]
-    );
-
-  setRouteCoordinates(coords);
-
-  setShowResult(true);
-
-} else {
-
-  alert("No route found");
-
-}
+        setRouteCoordinates(coords);
+        localStorage.setItem(
+  "dashboardData",
+  JSON.stringify({
+    humanCount,
+    vehicleCount: vehicles,
+    resolvedAlerts: Math.floor(Math.random() * 50),
+    sosCount: Math.floor(Math.random() * 20),
+  })
+);  
+        setShowResult(true);
+      } else {
+        alert("No route found");
+      }
     } catch (error) {
-        console.log(error.response)
+      console.log(error.response);
       console.log(error);
-      alert("Route API failed")
+      alert("Route API failed");
     }
   };
 
@@ -134,14 +160,60 @@ if (isNight && humanCount < 20) {
         <div className="space-y-5">
           <div>
             <label className="text-sm text-gray-400">CURRENT LOCATION</label>
+            <div className="relative mt-2">
+              <input
+                type="text"
+                placeholder="Select Start Point"
+                value={startPoint}
+                onChange={(e) => setStartPoint(e.target.value)}
+                onClick={() => setShowSuggestions(!showSuggestions)}
+                className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 outline-none"
+              />
 
-            <input
-              type="text"
-              placeholder="Select Start Point"
-              value={startPoint}
-              onChange={(e) => setStartPoint(e.target.value)}
-              className="w-full mt-2 bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 outline-none"
-            />
+              {showSuggestions && (
+                <div className="absolute left-0 top-[110%] z-50 w-full rounded-2xl border border-[#374151] bg-[#111827] p-2 shadow-2xl">
+                  <button
+                    onClick={() => {
+                      setStartPoint("RIT Roorkee Main Gate");
+                      setShowSuggestions(false);
+                    }}
+                    className="w-full rounded-xl px-4 py-3 text-left text-sm text-white transition hover:bg-white/10"
+                  >
+                    📍 RIT Roorkee Main Gate
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setStartPoint("RIT Roorkee Main Gate");
+                      setShowSuggestions(false);
+                    }}
+                    className="w-full rounded-xl px-4 py-3 text-left text-sm text-white transition hover:bg-white/10"
+                  >
+                    📍 Railway Station Road
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setStartPoint("Civil Lines Market");
+                      setShowSuggestions(false);
+                    }}
+                    className="w-full rounded-xl px-4 py-3 text-left text-sm text-white transition hover:bg-white/10"
+                  >
+                    📍 Civil Lines Market
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setStartPoint("IIT Roorkee Side Gate");
+                      setShowSuggestions(false);
+                    }}
+                    className="w-full rounded-xl px-4 py-3 text-left text-sm text-white transition hover:bg-white/10"
+                  >
+                    📍 IIT Roorkee Side Gate
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div>
@@ -191,14 +263,16 @@ if (isNight && humanCount < 20) {
                 <p className="text-gray-400 text-sm">HUMAN COUNT</p>
 
                 <h2 className="text-4xl font-bold text-purple-400 mt-2">
-                 {humanCount}
+                  {humanCount}
                 </h2>
               </div>
 
               <div className="bg-cyan-500/20 rounded-2xl p-4">
                 <p className="text-gray-400 text-sm">VEHICLES</p>
 
-                <h2 className="text-4xl font-bold text-cyan-400 mt-2">{vehicles}</h2>
+                <h2 className="text-4xl font-bold text-cyan-400 mt-2">
+                  {vehicles}
+                </h2>
               </div>
 
               <div className="bg-yellow-500/20 rounded-2xl p-4">
@@ -213,22 +287,20 @@ if (isNight && humanCount < 20) {
                 <p className="text-gray-400 text-sm">THREAT LEVEL</p>
 
                 <h2 className="text-3xl font-bold text-green-400 mt-2">
-                 {threatLevel}
+                  {threatLevel}
                 </h2>
               </div>
             </div>
 
             <div className="mt-6 bg-green-500/10 border border-green-500 rounded-xl p-4 text-green-400 font-semibold text-center">
               {threatLevel === "HIGH"
-  ? "⚠️ Unsafe Route Detected"
-  : threatLevel === "MEDIUM"
-  ? "🟡 Moderately Safe Route"
-  : "✅ Safe Route Suggested"}
+                ? "⚠️ Unsafe Route Detected"
+                : threatLevel === "MEDIUM"
+                  ? "🟡 Moderately Safe Route"
+                  : "✅ Safe Route Suggested"}
             </div>
           </div>
         )}
-
-
 
         {routeCoordinates.length > 0 && (
           <div className="map-section mt-6">
@@ -262,10 +334,16 @@ if (isNight && humanCount < 20) {
               {/* REAL ROAD ROUTE */}
               <Polyline positions={routeCoordinates} color="lime" weight={5} />
             </MapContainer>
+            <div className="mt-6">
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="w-full rounded-xl bg-green-600 py-4 text-lg font-semibold hover:bg-green-700 transition"
+              >
+                Continue to Dashboard →
+              </button>
+            </div>
           </div>
         )}
-
-
       </div>
     </div>
   );
