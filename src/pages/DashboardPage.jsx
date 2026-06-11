@@ -29,7 +29,8 @@ const alertsSeed = [
 function DashboardPage() {
   const navigate = useNavigate();
   const [streetLightOn, setStreetLightOn] = useState(true);
-  const [detections, setDetections] = useState(0);
+  // const [detections, setDetections] = useState(0);
+  // const [routeGenerated, setRouteGenerated] = useState(false);
   const [sosOpen, setSosOpen] = useState(false);
   const [sendingSos, setSendingSos] = useState(false);
   const [alerts, setAlerts] = useState(alertsSeed);
@@ -39,37 +40,49 @@ function DashboardPage() {
   const [resolvedAlerts, setResolvedAlerts] = useState(0);
   const [sosCount, setSosCount] = useState(0);
   const [startPoint, setStartPoint] = useState("");
-const [destination, setDestination] = useState("");
-const [routeGenerated, setRouteGenerated] = useState(false);
-const [sensorData, setSensorData] = useState({
-  status: "Waiting for ESP32...",
-  distanceValue: 0,
-  threatLevel: "None",
-});
-useEffect(() => {
-  const fetchData = () => {
-    fetch("http://localhost:3000/api/dashboard")
-      .then((res) => res.json())
-      .then((data) => {
-        setSensorData({
-          status: data.status,
-          distanceValue: data.distanceValue,
-          threatLevel:
-            data.status === "Waiting for ESP32..."
-              ? "None"
-              : data.status.includes("Unsafe")
-              ? "High"
-              : "Low",
+  const [destination, setDestination] = useState("");
+  const [routeGenerated, setRouteGenerated] = useState(false);
+  const allowedStartLocations = ["Tyagipur", "Civil Lines"];
+  const allowedDestinations = ["Roorkee", "Haridwar"];
+  const [sensorData, setSensorData] = useState({
+    status: "Waiting for ESP32...",
+    VehicleCount: 0,
+    humanCount: 0,
+    threatLevel: "None",
+  });
+  const isValidRoute =
+    allowedStartLocations.includes(startPoint) &&
+    allowedDestinations.includes(destination);
+  useEffect(() => {
+    const fetchData = () => {
+      fetch("http://localhost:3000/api/dashboard")
+        .then((res) => res.json())
+        .then((data) => {
+          setSensorData({
+            status: data.status,
+            vehicleCount: data.vehicleCount || 0,
+            humanCount: data.humanCount || 0,
+            sosCount: data.sosCount || 0,
+            threatLevel:
+              data.status === "Waiting for ESP32..."
+                ? "None"
+                : data.status.includes("Unsafe")
+                  ? "High"
+                  : "Low",
+          });
+
+          setStreetLightOn(
+            isValidRoute && data.status !== "Waiting for ESP32...",
+          );
         });
-      });
-  };
+    };
 
-  fetchData(); // Run immediately
+    fetchData(); // Run immediately
 
-  const interval = setInterval(fetchData, 3000);
+    const interval = setInterval(fetchData, 3000);
 
-  return () => clearInterval(interval);
-}, []);
+    return () => clearInterval(interval);
+  }, []);
   // useEffect(() => {
   //   const saved = localStorage.getItem("dashboardData");
 
@@ -83,19 +96,12 @@ useEffect(() => {
   //   }
   // }, []);
 
-  useEffect(() => {
-    const statusTimer = setInterval(() => {
-      setStreetLightOn((prev) => !prev);
-    }, 5000);
-    return () => clearInterval(statusTimer);
-  }, []);
-
-  useEffect(() => {
-    const movementTimer = setInterval(() => {
-      setDetections((prev) => prev + Math.ceil(Math.random() * 2));
-    }, 2600);
-    return () => clearInterval(movementTimer);
-  }, []);
+  // useEffect(() => {
+  //   const statusTimer = setInterval(() => {
+  //     setStreetLightOn((prev) => !prev);
+  //   }, 5000);
+  //   return () => clearInterval(statusTimer);
+  // }, []);
 
   useEffect(() => {
     const alertTimer = setInterval(() => {
@@ -117,27 +123,33 @@ useEffect(() => {
   //   localStorage.removeItem("wss-auth");
   //   navigate("/login");
   // };
-const handleSearch = () => {
-  if (!startPoint || !destination) {
-    alert("Please select both locations");
-    return;
-  }
+  const handleSearch = () => {
+    if (!startPoint || !destination) {
+      alert("Please select both locations");
+      return;
+    }
+    if (!isValidRoute) {
+      alert(
+        "Only Tyagipur/Civil Lines to Roorkee/Haridwar routes are available.",
+      );
+      return;
+    }
 
-  if (routeGenerated) return;
+    if (routeGenerated) return;
 
-  setHumanCount(43);
-  setVehicleCount(8);
-  setResolvedAlerts(13);
-  setSosCount(4);
+    setHumanCount(0);
+    setVehicleCount(1);
+    setResolvedAlerts(0);
+    // setSosCount( sensorData.sosCount);
 
-  setRouteGenerated(true);
-};
+    setRouteGenerated(true);
+  };
 
-const handleLogout = () => {
-  localStorage.removeItem("wss-auth");
-  localStorage.removeItem("dashboardData");
-  navigate("/login");
-};
+  const handleLogout = () => {
+    localStorage.removeItem("wss-auth");
+    localStorage.removeItem("dashboardData");
+    navigate("/login");
+  };
   // const triggerSos = () => {
 
   //   setSosOpen(true)
@@ -195,6 +207,16 @@ const handleLogout = () => {
           const data = await response.json();
 
           console.log(data);
+          await fetch("http://localhost:3000/api/toggle-sos", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              action: "ON",
+            }),
+          });
+          setSosCount((prev) => prev + 1);
 
           // PHONE CALL
           window.location.href = "tel:+917979753935";
@@ -228,11 +250,18 @@ const handleLogout = () => {
 
   const lightClasses = useMemo(
     () =>
-      streetLightOn
-        ? "bg-emerald-500 shadow-[0_0_14px_rgba(16,185,129,0.7)]"
-        : "bg-red-500 shadow-[0_0_14px_rgba(239,68,68,0.7)]",
-    [streetLightOn],
+      sensorData.status === "Waiting for ESP32..."
+        ? "bg-red-500 shadow-[0_0_14px_rgba(239,68,68,0.7)]"
+        : "bg-emerald-500 shadow-[0_0_14px_rgba(16,185,129,0.7)]",
+    [sensorData.status],
   );
+  const routeRecommendation = !routeGenerated
+    ? "SELECT ROUTE TO GET RECOMMENDATION"
+    : sensorData.humanCount >= 5 && sensorData.vehicleCount >= 5
+      ? "SAFE PATH SUGGESTED ✅"
+      : sensorData.humanCount >= 2 && sensorData.vehicleCount >= 2
+        ? "MODERATELY SAFE ⚠️"
+        : "AVOID ROUTE ❌";
 
   return (
     <motion.main
@@ -294,55 +323,80 @@ const handleLogout = () => {
 
         <section className="space-y-6">
           <Navbar onLogout={handleLogout} variant="safeguard" />
-    <div className="rounded-[2rem] border border-pale-gray bg-surface p-6 shadow-md">
-  <h2 className="text-2xl font-bold text-primary">
-    Pathfinder AI
-  </h2>
+          <div className="rounded-[2rem] border border-pale-gray bg-surface p-6 shadow-md">
+            <h2 className="text-2xl font-bold text-primary">Pathfinder AI</h2>
 
-  <p className="mt-1 text-sm text-mid-gray">
-    Find the safest route before travelling
-  </p>
+            <p className="mt-1 text-sm text-mid-gray">
+              Find the safest route before travelling
+            </p>
 
-  <div className="mt-5 grid gap-4 md:grid-cols-2">
-    <input
-      type="text"
-      placeholder="Current Location"
-      value={startPoint}
-      onChange={(e) => setStartPoint(e.target.value)}
-      className="rounded-xl border border-pale-gray px-4 py-3 outline-none"
-    />
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <select
+                value={startPoint}
+                onChange={(e) => {
+                  setStartPoint(e.target.value);
+                  setRouteGenerated(false);
+                }}
+                className="rounded-xl border border-pale-gray px-4 py-3 outline-none"
+              >
+                <option value="">Select Current Location</option>
+                <option value="Tyagipur">Tyagipur</option>
+                <option value="Civil Lines">Civil Lines</option>
+              </select>
 
-    <input
-      type="text"
-      placeholder="Destination"
-      value={destination}
-      onChange={(e) => setDestination(e.target.value)}
-      className="rounded-xl border border-pale-gray px-4 py-3 outline-none"
-    />
-  </div>
+              <select
+                value={destination}
+                onChange={(e) => {
+                  setDestination(e.target.value);
+                  setRouteGenerated(false);
+                }}
+                className="rounded-xl border border-pale-gray px-4 py-3 outline-none"
+              >
+                <option value="">Select Destination</option>
+                <option value="Roorkee">Roorkee</option>
+                <option value="Haridwar">Haridwar</option>
+              </select>
 
- <button
-  onClick={handleSearch}
-  className="mt-4 w-full rounded-xl bg-primary py-3 font-semibold text-white"
+              <button
+                onClick={handleSearch}
+                className="mt-4 w-full rounded-xl bg-primary py-3 font-semibold text-white"
+              >
+                GET SAFEST ROUTE
+              </button>
+            </div>
+            <div className="bg-white rounded-3xl p-6 shadow">
+              <h3 className="text-xl font-bold mb-4">Live Sensor Data</h3>
+              <p>
+                <strong>Street Light Status:</strong>{" "}
+                {routeGenerated && isValidRoute ? sensorData.status : "Offline"}
+              </p>
+
+              <p>
+                <strong>Vehicle Count:</strong>
+                {routeGenerated && isValidRoute ? sensorData.vehicleCount : 0}
+              </p>
+
+              <p>
+                <strong>Threat Level:</strong>{" "}
+                {routeGenerated && isValidRoute
+                  ? sensorData.threatLevel
+                  : "None"}
+              </p>
+            <div
+  className={`rounded-2xl px-6 py-5 text-center font-bold text-xl shadow-lg transition-all duration-300 ${
+    !routeGenerated
+      ? "bg-slate-700 text-white"
+      : routeRecommendation.includes("SAFE PATH")
+        ? "bg-green-600 text-white"
+        : routeRecommendation.includes("MODERATELY")
+          ? "bg-yellow-500 text-black"
+          : "bg-red-600 text-white"
+  }`}
 >
-  GET SAFEST ROUTE
-</button> 
+  {routeRecommendation}
 </div>
-<div className="bg-white rounded-3xl p-6 shadow">
-  <h3 className="text-xl font-bold mb-4">Live Sensor Data</h3>
-
-  <p>
-    <strong>Street Light Status:</strong> {sensorData.status}
-  </p>
-
-  <p>
-    <strong>Vehicle Distance:</strong> {sensorData.distanceValue} cm
-  </p>
-
-  <p>
-    <strong>Threat Level:</strong> {sensorData.threatLevel}
-  </p>
-</div>
+            </div>
+          </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 xl:gap-6">
             <motion.div
               whileHover={{
@@ -410,7 +464,7 @@ const handleLogout = () => {
               </p>
 
               <p className="text-3xl font-bold tabular-nums text-gray-900">
-                {sosCount}
+                {routeGenerated ? sensorData.sosCount : 0}
               </p>
 
               <div className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-0 transition-all duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.28),rgba(255,223,120,0.18),transparent_72%)] blur-xl"></div>
@@ -427,8 +481,10 @@ const handleLogout = () => {
               <div className="flex min-h-[10rem] flex-1 flex-col justify-center gap-4 rounded-2xl bg-off-white px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-5">
                 <p className="text-sm text-mid-gray">
                   State:{" "}
-                  <span className="font-semibold text-primary">
-                    {streetLightOn ? "Active" : "Offline"}
+                  <span>
+                    {sensorData.status === "Waiting for ESP32..."
+                      ? "Offline"
+                      : "Active"}
                   </span>
                 </p>
                 <span
@@ -456,20 +512,24 @@ const handleLogout = () => {
                     }}
                     className="absolute top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-accent/35 to-transparent"
                   />
-                  <div className="relative z-10 flex h-full items-center justify-center text-sm font-medium text-mid-gray">
-                    <Camera size={16} className="mr-2 text-primary" />
-                    Camera feed secured
+                  <div className="h-[250px] overflow-hidden rounded-xl border">
+                    <img
+                      src="http://10.168.83.52:8080/video"
+                      alt="Live Camera Feed"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
                 <div className="flex min-h-[13rem] flex-1 flex-col justify-center rounded-2xl border border-pale-gray bg-off-white p-5">
-                  <p className="text-xs uppercase tracking-wider text-light-gray">
-                    Movement detection
+                  <p className="text-xs uppercase tracking-[0.2em] text-mid-gray">
+                    HUMAN COUNT
                   </p>
-                  <p className="mt-1 text-3xl font-bold text-primary">
-                    {detections}
+
+                  <p className="text-5xl font-bold">
+                    {routeGenerated ? sensorData.humanCount || 0 : "--"}
                   </p>
                   <p className="mt-1 text-sm text-mid-gray">
-                    events in this session
+                    People in monitored zone
                   </p>
                 </div>
               </div>
@@ -503,61 +563,89 @@ const handleLogout = () => {
 
             <Card
               accent="sky"
-              title="Live Tracking"
-              subtitle="Guardian route visibility"
+              title="Smart Safety Status"
+              subtitle="Real-time safety monitoring"
               className="xl:col-span-4"
             >
-              <div className="relative min-h-[14rem] flex-1 overflow-hidden rounded-2xl border border-pale-gray bg-surface">
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(212,212,212,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(212,212,212,0.5)_1px,transparent_1px)] bg-[size:24px_24px]" />
-                <motion.div
-                  animate={{ x: [0, 90, 140, 210], y: [0, 40, 18, 82] }}
-                  transition={{
-                    repeat: Number.POSITIVE_INFINITY,
-                    duration: 6,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute left-3 top-3 h-3 w-3 rounded-full bg-accent shadow-[0_0_14px_rgba(232,216,74,0.9)]"
-                />
-                <div className="absolute bottom-2 right-2 rounded-xl bg-primary px-2.5 py-1 text-xs font-medium text-white shadow-md">
-                  <LocateFixed size={12} className="mr-1 inline text-accent" />
-                  Sector-14, monitored
+              <div className="space-y-4 rounded-2xl border border-pale-gray bg-off-white p-5">
+                <div className="flex justify-between">
+                  <span>ESP32 Status</span>
+                  <span className="font-semibold text-green-600">
+                    {sensorData.status === "Waiting for ESP32..."
+                      ? "Offline"
+                      : "Connected"}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Street Lights</span>
+                  <span className="font-semibold">
+                    {sensorData.status === "Waiting for ESP32..."
+                      ? "Offline"
+                      : "Active"}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Vehicle Count</span>
+                  <span className="font-semibold">
+                    {sensorData.vehicleCount}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Threat Level</span>
+                  <span className="font-semibold">
+                    {sensorData.threatLevel}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Current Route</span>
+                  <span className="font-semibold">
+                    {startPoint && destination
+                      ? `${startPoint} → ${destination}`
+                      : "Not Selected"}
+                  </span>
                 </div>
               </div>
             </Card>
 
             <Card
               accent="violet"
-              title="Alert System"
-              subtitle="Latest emergency communications"
+              title="Emergency Contacts"
+              subtitle="Instant emergency support"
               className="xl:col-span-4"
             >
-              <AnimatePresence mode="popLayout">
-                {" "}
-                <div className="flex max-h-[min(22rem,55vh)] flex-col gap-2 overflow-y-auto pr-1">
-                  {alerts.map((alert, i) => {
-                    const palettes = [
-                      "border-pale-gray bg-off-white text-primary",
-                      "border-pale-gray bg-surface text-primary",
-                      "border-pale-gray bg-off-white text-primary",
-                      "border-pale-gray bg-surface text-primary",
-                    ];
-                    return (
-                      <motion.div
-                        key={alert.id}
-                        initial={{ opacity: 0, x: 16 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -16 }}
-                        className={`flex min-h-[3rem] shrink-0 items-center gap-3 rounded-2xl border px-3.5 py-2.5 text-sm shadow-sm ${palettes[i % palettes.length]}`}
-                      >
-                        <BellRing size={14} className="shrink-0 text-primary" />
-                        <span className="min-w-0 flex-1 truncate leading-snug text-mid-gray">
-                          {alert.text}
-                        </span>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </AnimatePresence>
+              <div className="space-y-3">
+                <a
+                  href="tel:112"
+                  className="block rounded-xl border p-4 hover:bg-off-white"
+                >
+                  🚔 Police Emergency - 112
+                </a>
+
+                <a
+                  href="tel:1091"
+                  className="block rounded-xl border p-4 hover:bg-off-white"
+                >
+                  👩 Women Helpline - 1091
+                </a>
+
+                <a
+                  href="tel:108"
+                  className="block rounded-xl border p-4 hover:bg-off-white"
+                >
+                  🚑 Ambulance - 108
+                </a>
+
+                <a
+                  href="tel:+917979753935"
+                  className="block rounded-xl border p-4 hover:bg-off-white"
+                >
+                  👨 Guardian Contact
+                </a>
+              </div>
             </Card>
 
             <Card
