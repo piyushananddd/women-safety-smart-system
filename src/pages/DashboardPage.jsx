@@ -55,7 +55,8 @@ function DashboardPage() {
     allowedDestinations.includes(destination);
   useEffect(() => {
     const fetchData = () => {
-      fetch("http://localhost:3000/api/dashboard")
+      // fetch("http://localhost:3000/api/dashboard")
+      fetch("https://raksha-kavach-backend.onrender.com/api/dashboard")
         .then((res) => res.json())
         .then((data) => {
           setSensorData({
@@ -207,7 +208,8 @@ function DashboardPage() {
           const data = await response.json();
 
           console.log(data);
-          await fetch("http://localhost:3000/api/toggle-sos", {
+          // await fetch("http://localhost:3000/api/toggle-sos", {
+          await fetch("https://raksha-kavach-backend.onrender.com/api/toggle-sos", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
