@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
+// import ProfilePage from './ProfilePage'; // Adjust path if needed
+// import { useState } from 'react';
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -48,6 +50,8 @@ function DashboardPage() {
     status: "Waiting for ESP32...",
     VehicleCount: 0,
     humanCount: 0,
+    ldr1: 0,
+    ldr2: 0,
     threatLevel: "None",
   });
   const isValidRoute =
@@ -63,6 +67,8 @@ function DashboardPage() {
             status: data.status,
             vehicleCount: data.vehicleCount || 0,
             humanCount: data.humanCount || 0,
+            ldr1: data.ldr1 || 0,
+            ldr2: data.ldr2 || 0,
             sosCount: data.sosCount || 0,
             threatLevel:
               data.status === "Waiting for ESP32..."
@@ -209,15 +215,18 @@ function DashboardPage() {
 
           console.log(data);
           // await fetch("http://localhost:3000/api/toggle-sos", {
-          await fetch("https://raksha-kavach-backend.onrender.com/api/toggle-sos", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
+          await fetch(
+            "https://raksha-kavach-backend.onrender.com/api/toggle-sos",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                action: "ON",
+              }),
             },
-            body: JSON.stringify({
-              action: "ON",
-            }),
-          });
+          );
           setSosCount((prev) => prev + 1);
 
           // PHONE CALL
@@ -257,13 +266,32 @@ function DashboardPage() {
         : "bg-emerald-500 shadow-[0_0_14px_rgba(16,185,129,0.7)]",
     [sensorData.status],
   );
-  const routeRecommendation = !routeGenerated
-    ? "SELECT ROUTE TO GET RECOMMENDATION"
-    : sensorData.humanCount >= 5 && sensorData.vehicleCount >= 5
-      ? "SAFE PATH SUGGESTED ✅"
-      : sensorData.humanCount >= 2 && sensorData.vehicleCount >= 2
-        ? "MODERATELY SAFE ⚠️"
-        : "AVOID ROUTE ❌";
+
+  let selectedLdr = 0;
+
+  if (startPoint === "Tyagipur" && destination === "Roorkee") {
+    selectedLdr = sensorData.ldr1;
+  }
+
+  if (startPoint === "Civil Lines" && destination === "Haridwar") {
+    selectedLdr = sensorData.ldr2;
+  }
+
+ const routeRecommendation = !routeGenerated
+  ? "SELECT ROUTE TO GET RECOMMENDATION"
+  : (
+      selectedLdr > 60 &&
+      sensorData.humanCount >= 5 &&
+      sensorData.vehicleCount >= 5
+    )
+  ? "SAFE PATH SUGGESTED ✅"
+  : (
+      selectedLdr > 30 &&
+      sensorData.humanCount >= 2 &&
+      sensorData.vehicleCount >= 2
+    )
+  ? "MODERATELY SAFE ⚠️"
+  : "AVOID ROUTE ❌";
 
   return (
     <motion.main
@@ -277,7 +305,7 @@ function DashboardPage() {
 
       <div className="relative mx-auto grid max-w-[1500px] gap-6 lg:grid-cols-[260px_1fr] xl:gap-8">
         <aside className="hidden h-fit rounded-[2rem] border border-pale-gray bg-surface p-6 shadow-md shadow-primary/5 lg:block">
-          <p className="mb-1 text-lg font-bold text-primary">SafeGuardHer</p>
+          <p className="mb-1 text-lg font-bold text-primary">Raksha-Kavach</p>
           <p className="mb-5 text-xs text-mid-gray">
             Women Safety App · Dashboard
           </p>
@@ -377,6 +405,9 @@ function DashboardPage() {
                 <strong>Vehicle Count:</strong>
                 {routeGenerated && isValidRoute ? sensorData.vehicleCount : 0}
               </p>
+              <p>
+                <strong>Route Light Value:</strong> {selectedLdr}
+              </p>
 
               <p>
                 <strong>Threat Level:</strong>{" "}
@@ -384,19 +415,19 @@ function DashboardPage() {
                   ? sensorData.threatLevel
                   : "None"}
               </p>
-            <div
-  className={`rounded-2xl px-6 py-5 text-center font-bold text-xl shadow-lg transition-all duration-300 ${
-    !routeGenerated
-      ? "bg-slate-700 text-white"
-      : routeRecommendation.includes("SAFE PATH")
-        ? "bg-green-600 text-white"
-        : routeRecommendation.includes("MODERATELY")
-          ? "bg-yellow-500 text-black"
-          : "bg-red-600 text-white"
-  }`}
->
-  {routeRecommendation}
-</div>
+              <div
+                className={`rounded-2xl px-6 py-5 text-center font-bold text-xl shadow-lg transition-all duration-300 ${
+                  !routeGenerated
+                    ? "bg-slate-700 text-white"
+                    : routeRecommendation.includes("SAFE PATH")
+                      ? "bg-green-600 text-white"
+                      : routeRecommendation.includes("MODERATELY")
+                        ? "bg-yellow-500 text-black"
+                        : "bg-red-600 text-white"
+                }`}
+              >
+                {routeRecommendation}
+              </div>
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 xl:gap-6">

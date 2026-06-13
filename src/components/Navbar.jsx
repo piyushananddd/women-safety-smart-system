@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Bell, LogOut, Search, Shield } from "lucide-react";
 import NeonButton from "./NeonButton";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Navbar({ onLogout, variant = "light" }) {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const isBrand = variant === "safeguard";
   const [showProfile, setShowProfile] = useState(false);
@@ -92,6 +92,7 @@ function Navbar({ onLogout, variant = "light" }) {
           >
             <button
               onClick={() => {
+                navigate("/profile")
                 setShowProfile(true);
                 setShowMenu(false);
               }}
